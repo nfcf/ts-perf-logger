@@ -1,0 +1,28 @@
+{
+  "name": "ngx-perf-logger",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nfcf/ngx-perf-logger"
+  },
+  "author": {
+    "name": "Nuno Freire",
+    "email": "nunofcf@gmail.com"
+  },
+  "keywords": [
+    "angular",
+    "typescript",
+    "decorators"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nfcf/ngx-perf-logger/issues"
+  },
+  "module": "ngx-perf-logger.js",
+  "typings": "ngx-perf-logger.d.ts",
+  "peerDependencies": {
+    "@angular/core": "^4.0.0",
+    "rxjs": "^5.4.2",
+    "lodash": "^4.17.4"
+  }
+}
