@@ -45,7 +45,28 @@ export class AppModule {
 }
 ```
 
+or 
 
+```typescript
+export class AppModule { 
+
+  foo() { 
+    PerfLogManager.logPerfInit('foo');
+    try {
+      // ... do some work ...
+      PerfLogManager.logPerfEnd('foo', true);
+    } catch (error) {
+      PerfLogManager.logPerfEnd('foo', false);
+    }
+  }
+
+}
+```
+
+To get the statistics for all executed methods call: 
+```typescript
+PerfLogManager.getStatistics()
+```
 
 ## Development
 
