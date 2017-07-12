@@ -10,10 +10,10 @@
       "dom"
     ],
     "skipLibCheck": true,
-    "types": []
+    "types": ["lodash"]
   },
   "exclude": [
-        "node_modules"
-    ]
+    "node_modules"
+  ]
 
 }

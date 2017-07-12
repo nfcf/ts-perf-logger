@@ -1,6 +1,6 @@
 {
-  "name": "ngx-perf-logger",
-  "version": "0.1.1",
+  "name": "ts-perf-logger",
+  "version": "0.1.0",
   "repository": {
     "type": "git",
     "url": "https://bitbucket.org/nfcf/ts-perf-logger"
@@ -22,7 +22,6 @@
   "typings": "ts-perf-logger.d.ts",
   "peerDependencies": {
     "@angular/core": "^4.0.0",
-    "rxjs": "^5.4.2",
     "lodash": "^4.17.4"
   }
 }

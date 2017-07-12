@@ -1,12 +1,12 @@
 {
-  "name": "ngx-perf-logger",
-  "description": "Profiling / Performance Logger TypeScript Decorators",
-  "version": "0.1.1",
+  "name": "ts-perf-logger",
+  "description": "Profiling / Performance Logger using TypeScript Decorators",
+  "version": "0.1.0",
   "scripts": {
     "build": "gulp build",
     "build:watch": "gulp",
     "docs": "npm run docs:build",
-    "docs:build": "compodoc -p tsconfig.json -n ngx-perf-logger -d docs --hideGenerator",
+    "docs:build": "compodoc -p tsconfig.json -n ts-perf-logger -d docs --hideGenerator",
     "docs:serve": "npm run docs:build -- -s",
     "docs:watch": "npm run docs:build -- -s -w",
     "lint": "tslint --type-check --project tsconfig.json src/**/*.ts",
@@ -22,7 +22,8 @@
   },
   "keywords": [
     "Typescript",
-    "Decorators"
+    "Decorators",
+    "Profiling"
   ],
   "license": "MIT",
   "bugs": {

@@ -1,57 +1,51 @@
-# ngx-perf-logger
+# ts-perf-logger
 
 ## Installation
 
 To install this library, run:
 
 ```bash
-$ npm install ngx-perf-logger --save
+$ npm install ts-perf-logger --save
 ```
 
 ## Consuming your library
 
-Once you have published your library to npm, you can import your library in any Angular application by running:
-
-```bash
-$ npm install ngx-perf-logger
-```
-
-and then from your Angular `AppModule`:
+Once you have installed your library from npm, you can import it in any Typescript application by running:
 
 ```typescript
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { LogClassPerformance,
+         LogFunctionPerformance,
+         PerfLogManager,
+         DisableLogFunctionPerformance } from 'ts-perf-logger';
 
-import { AppComponent } from './app.component';
-
-// Import your library
-import { SampleModule } from 'ngx-perf-logger';
-
-@NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule,
-
-    // Specify your library as an import
-    LibraryModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
-})
-export class AppModule { }
 ```
 
-Once your library is imported, you can use its components, directives and pipes in your Angular application:
+Once your library is imported, you can use its @Decorators in your application:
 
-```xml
-<!-- You can now use your library component in app.component.html -->
-<h1>
-  {{title}}
-</h1>
-<sampleComponent></sampleComponent>
+```typescript
+@LogClassPerformance()
+export class AppModule { 
+  
+  foo() { }
+
+  @DisableLogFunctionPerformance()
+  bar() { }
+  
+}
 ```
+
+or
+
+```typescript
+export class AppModule { 
+
+  @LogFunctionPerformance()
+  foo() { }
+
+}
+```
+
+
 
 ## Development
 

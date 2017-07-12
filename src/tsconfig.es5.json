@@ -21,8 +21,8 @@
     "annotateForClosureCompiler": true,
     "strictMetadataEmit": true,
     "skipTemplateCodegen": true,
-    "flatModuleOutFile": "ngx-perf-logger.js",
-    "flatModuleId": "ngx-perf-logger"
+    "flatModuleOutFile": "ts-perf-logger.js",
+    "flatModuleId": "ts-perf-logger"
   },
   "files": [
     "./index.ts"

@@ -18,7 +18,6 @@ const distFolder = path.join(rootFolder, 'dist');
  * 1. Delete /dist folder
  */
 gulp.task('clean:dist', function () {
-
   // Delete contents but not dist folder to avoid broken npm links
   // when dist directory is removed while npm link references it.
   return deleteFolders([distFolder + '/**', '!' + distFolder]);
@@ -131,7 +130,7 @@ gulp.task('rollup:umd', function () {
       // The name to use for the module for UMD/IIFE bundles
       // (required for bundles with exports)
       // See https://github.com/rollup/rollup/wiki/JavaScript-API#modulename
-      moduleName: 'ngx-perf-logger',
+      moduleName: 'ts-perf-logger',
 
       // See https://github.com/rollup/rollup/wiki/JavaScript-API#globals
       globals: {
@@ -139,7 +138,7 @@ gulp.task('rollup:umd', function () {
       }
 
     }))
-    .pipe(rename('ngx-perf-logger.umd.js'))
+    .pipe(rename('ts-perf-logger.umd.js'))
     .pipe(gulp.dest(distFolder));
 });
 
