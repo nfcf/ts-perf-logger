@@ -9,13 +9,9 @@ import * as _ from 'lodash';
  * Functions that return observables should not be included here and their performance logging should be
  * done using PerfLogManager.logPerfInit() and PerfLogManager.logPerfEnd().
  * @param methodNames Array of method's names that are to be logged; if undefined, all methods are logged.
- * @param logMethod Override of logMethod - the defaultLogMethod simply writes to console.log()
+ * @param newLogMethod Override of logMethod - the defaultLogMethod simply writes to console.log()
  */
-export function LogClassPerformance(methodNamesToLog?: string[], logMethod: ILogMethod = PerfLogManager.logMethod) {
-  if (!logMethod) {
-    logMethod = () => { };
-  }
-
+export function LogClassPerformance(methodNamesToLog?: string[], newLogMethod?: ILogMethod) {
   return function (target) {
     _.keys(target.prototype).filter(function (methodName: string): boolean {
       return !methodNamesToLog || methodNamesToLog.indexOf(methodName) !== -1;
@@ -28,7 +24,7 @@ export function LogClassPerformance(methodNamesToLog?: string[], logMethod: ILog
         return;
       }
 
-      target.prototype[methodName] = getPerfLogPatchedMethod(name, originalMethod, logMethod);
+      target.prototype[methodName] = getPerfLogPatchedMethod(name, originalMethod, newLogMethod);
     });
   };
 }
@@ -36,25 +32,22 @@ export function LogClassPerformance(methodNamesToLog?: string[], logMethod: ILog
 /**
  * Logs the time it takes for the function to complete
  * @param name Name to be used in the logs to reference this function; Otherwise, 'Class.functionName' is used
- * @param logMethod Override of logMethod - the defaultLogMethod simply writes to console.log()
+ * @param newLogMethod Override of logMethod - the defaultLogMethod simply writes to console.log()
  */
-export function LogFunctionPerformance(name?: string, logMethod: ILogMethod = PerfLogManager.logMethod) {
-  if (!logMethod) {
-    logMethod = () => { };
-  }
-
+export function LogFunctionPerformance(name?: string, newLogMethod?: ILogMethod) {
   return function (target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<any>) {
     name = name || getObjectClass(target) + '.' + propertyKey;
     descriptor = descriptor || Object.getOwnPropertyDescriptor(target, propertyKey);
 
     let originalMethod = descriptor.value;
-    originalMethod = getPerfLogPatchedMethod(name, originalMethod, logMethod);
-    originalMethod.__perfLogCompleted = true;
-
-    return descriptor;
+    descriptor.value = getPerfLogPatchedMethod(name, originalMethod, newLogMethod);
+    descriptor.value.__perfLogCompleted = true;
   };
 }
 
+/**
+ * Disable the Performance Logging feature for this method. To be used inside classes decorated with @LogClassPerformance()
+ */
 export function DisableLogFunctionPerformance() {
   return function (target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<any>) {
     descriptor = descriptor || Object.getOwnPropertyDescriptor(target, propertyKey);
@@ -66,8 +59,9 @@ export function DisableLogFunctionPerformance() {
   };
 }
 
-function getPerfLogPatchedMethod(name: string, method: Function, logMethod: ILogMethod) {
+function getPerfLogPatchedMethod(name: string, method: Function, newLogMethod: ILogMethod) {
   return function (...args: any[]) {
+    let logMethod = newLogMethod || PerfLogManager.logMethod;
     let log = PerfLogManager.getLog(name);
     let startTime = performance.now();
     let timeTaken;

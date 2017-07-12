@@ -9,8 +9,8 @@ export class PerfLogManager {
 
   private static blockStartTime: any = {};
 
-  public static setDefaultLogMethod(logMethod: ILogMethod) {
-    return logMethod = logMethod;
+  public static setLogMethod(logMethod: ILogMethod) {
+    this.logMethod = logMethod;
   }
 
   public static getLog(name: string) {
