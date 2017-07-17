@@ -26,10 +26,14 @@ Once your library is imported, you can use its @Decorators in your application:
 @LogClassPerformance()
 export class AppModule { 
   
-  foo() { }
+  foo() {
+    // ... do some work ...
+  }
 
   @DisableLogFunctionPerformance()
-  bar() { }
+  bar() {
+    // ... do some work ...
+  }
   
 }
 ```
@@ -40,7 +44,9 @@ or
 export class AppModule { 
 
   @LogFunctionPerformance()
-  foo() { }
+  foo() {
+    // ... do some work ...
+  }
 
 }
 ```
@@ -72,10 +78,13 @@ export class AppModule {
   
   foo() {
     PerfLogManager.setActionId('action_unique_id');
+    // ... do some work ...
   }
 
   @DisableLogFunctionPerformance()
-  bar() { }
+  bar() {
+    // ... do some work ...
+  }
   
 }
 ```
@@ -92,6 +101,7 @@ export class AppModule {
   @LogFunctionPerformance()
   foo() {
     PerfLogManager.setActionId(PerfLogManager.getActionId() + 1);
+    // ... do some work ...
   }
 
 }
@@ -116,7 +126,9 @@ export class AppModule {
 ```
 
 
+
 To get the statistics for all executed methods call: 
+
 ```typescript
 PerfLogManager.getStatistics()
 ```
