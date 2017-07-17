@@ -1,3 +1,4 @@
+export * from './iblock';
 export * from './istats';
 export * from './ilogindexmap';
 export * from './iflatlog';

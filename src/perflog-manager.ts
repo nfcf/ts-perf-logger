@@ -1,4 +1,4 @@
-import { ILogMethod, ILogIndexMap, IFlatLog } from './interfaces/index';
+import { IBlockMap, ILogMethod, ILogIndexMap, IFlatLog } from './interfaces/index';
 import { PerfLog } from './index';
 
 export class PerfLogManager {
@@ -7,46 +7,45 @@ export class PerfLogManager {
   public static perfLogs: PerfLog[] = [];
   private static indexMap: ILogIndexMap = {};
 
-  private static blockStartTime: any = {};
+  private static blocksUnderMeasurement: IBlockMap = {};
+  private static currentActionId: any;
 
-  public static setLogMethod(logMethod: ILogMethod) {
+  public static setLogMethod(logMethod: ILogMethod): void {
     this.logMethod = logMethod;
   }
 
-  public static getLog(name: string) {
-    if (this.indexMap.hasOwnProperty(name)) {
-      return this.perfLogs[this.indexMap[name]];
-    }
-    let perfLog = new PerfLog(name);
-    let index = this.perfLogs.length;
-    this.perfLogs[index] = perfLog;
-    this.indexMap[name] = index;
-
-    return perfLog;
+  public static getActionId(): any {
+    return this.currentActionId;
   }
 
-  public static clearLogs() {
-    for (let i = 0; i < this.perfLogs.length; i++) {
-      this.perfLogs[i].clear();
-    }
+  public static setActionId(actionId: any): void {
+    this.currentActionId = actionId;
   }
 
-  public static logPerfInit(name: string) {
+  public static logPerfInit(name: string, actionId?: any): void {
     PerfLogManager.getLog(name);
-    this.blockStartTime[name] = performance.now();
+    this.blocksUnderMeasurement[name] = {
+      startDate: new Date(),
+      startTime: performance.now(),
+      actionId: actionId
+    };
   }
 
   public static logPerfEnd(name: string, success: boolean) {
     let log = PerfLogManager.getLog(name);
-    let timeTaken = performance.now() - this.blockStartTime[name];
-    this.logMethod(name, success, timeTaken);
+    let timeTaken = performance.now() - this.blocksUnderMeasurement[name].startTime;
+    this.logMethod(name,
+                   this.blocksUnderMeasurement[name].actionId,
+                   success,
+                   this.blocksUnderMeasurement[name].startDate,
+                   timeTaken);
     if (success) {
       log.appendSuccessTime(timeTaken);
     } else {
       log.appendFailureTime(timeTaken);
     }
 
-    delete this.blockStartTime[name];
+    delete this.blocksUnderMeasurement[name];
   }
 
   public static getStatistics() {
@@ -61,6 +60,24 @@ export class PerfLogManager {
     }
 
     return flatLogs;
+  }
+
+  public static getLog(name: string): PerfLog {
+    if (this.indexMap.hasOwnProperty(name)) {
+      return this.perfLogs[this.indexMap[name]];
+    }
+    let perfLog = new PerfLog(name);
+    let index = this.perfLogs.length;
+    this.perfLogs[index] = perfLog;
+    this.indexMap[name] = index;
+
+    return perfLog;
+  }
+
+  public static clearLogs(): void {
+    for (let i = 0; i < this.perfLogs.length; i++) {
+      this.perfLogs[i].clear();
+    }
   }
 
   private static getFlatLog(name: string, perfLog: PerfLog): IFlatLog {
@@ -79,9 +96,8 @@ export class PerfLogManager {
     };
   }
 
-  private static defaultLogMethod(name: string, success: boolean, timeTaken: number): void {
-    const status = (success) ? 'success' : 'fail';
-    const message = `Finished method ${name};  Status: ${status}; Time: ${timeTaken}ms.`;
+  private static defaultLogMethod(name: string, actionId: any, success: boolean, startDate: Date, timeTaken: number): void {
+    const message = `Finished method '${name}';  ActionId: ${actionId}; Success: ${success}; Date: ${startDate}; Time: ${timeTaken}ms.`;
     console.log(message);
   }
 

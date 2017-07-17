@@ -1,3 +1,3 @@
 export interface ILogMethod {
-  (name: string, success: boolean, timeTaken: number): void;
+  (name: string, actionId: any, success: boolean, startDate: Date, timeTaken: number): void;
 }

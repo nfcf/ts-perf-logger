@@ -63,6 +63,7 @@ function getPerfLogPatchedMethod(name: string, method: Function, newLogMethod: I
   return function (...args: any[]) {
     let logMethod = newLogMethod || PerfLogManager.logMethod;
     let log = PerfLogManager.getLog(name);
+    let startDate = new Date();
     let startTime = performance.now();
     let timeTaken;
     try {
@@ -70,24 +71,24 @@ function getPerfLogPatchedMethod(name: string, method: Function, newLogMethod: I
       if (result && result.then) { // if promise
         return result.then((val) => {
           timeTaken = performance.now() - startTime;
-          logMethod(name, true, timeTaken);
+          logMethod(name, PerfLogManager.getActionId(), true, startDate, timeTaken);
           log.appendSuccessTime(timeTaken);
           return val;
         }).catch((e) => {
           timeTaken = performance.now() - startTime;
-          logMethod(name, false, timeTaken);
+          logMethod(name, PerfLogManager.getActionId(), false, startDate, timeTaken);
           log.appendFailureTime(timeTaken);
           throw e;
         });
       } else { // if synchronous method
         timeTaken = performance.now() - startTime;
-        logMethod(name, true, timeTaken);
+        logMethod(name, PerfLogManager.getActionId(), true, startDate, timeTaken);
         log.appendSuccessTime(timeTaken);
         return result;
       }
     } catch (ex) {
       timeTaken = performance.now() - startTime;
-      logMethod(name, false, timeTaken);
+      logMethod(name, PerfLogManager.getActionId(), false, startDate, timeTaken);
       log.appendFailureTime(timeTaken);
       throw ex;
     }
