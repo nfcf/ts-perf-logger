@@ -85,9 +85,13 @@ or
 ```typescript
 export class AppModule { 
 
+  constructor() {
+    PerfLogManager.setActionId(0);
+  }
+
   @LogFunctionPerformance()
   foo() {
-    PerfLogManager.setActionId(123);
+    PerfLogManager.setActionId(PerfLogManager.getActionId() + 1);
   }
 
 }
