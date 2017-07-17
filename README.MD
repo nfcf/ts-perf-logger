@@ -78,7 +78,7 @@ export class AppModule {
   
   foo() {
     PerfLogManager.setActionId('action_unique_id');
-    // ... do some work ...
+    // ... do some work, call other functions ...
   }
 
   @DisableLogFunctionPerformance()
@@ -101,7 +101,7 @@ export class AppModule {
   @LogFunctionPerformance()
   foo() {
     PerfLogManager.setActionId(PerfLogManager.getActionId() + 1);
-    // ... do some work ...
+    // ... do some work, call other functions ...
   }
 
 }
@@ -115,7 +115,7 @@ export class AppModule {
   foo() { 
     PerfLogManager.logPerfInit('foo', 'my_action_id');
     try {
-      // ... do some work ...
+      // ... do some work, call other functions ...
       PerfLogManager.logPerfEnd('foo', true);
     } catch (error) {
       PerfLogManager.logPerfEnd('foo', false);
