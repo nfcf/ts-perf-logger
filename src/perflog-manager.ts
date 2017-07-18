@@ -102,7 +102,8 @@ export class PerfLogManager {
   }
 
   private static defaultLogMethod(name: string, actionId: any, success: boolean, startDate: Date, timeTaken: number): void {
-    const message = `Finished method '${name}';  ActionId: ${actionId}; Success: ${success}; Date: ${startDate}; Time: ${timeTaken}ms.`;
+    const message = `Finished method '${name}';  ActionId: ${actionId}; Success: ${success}; ` +
+                    `Date: ${startDate.toISOString()}; Time: ${timeTaken}ms.`;
     console.log(message);
   }
 
