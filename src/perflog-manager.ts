@@ -2,13 +2,18 @@ import { IBlockMap, ILogMethod, ILogIndexMap, IFlatLog } from './interfaces/inde
 import { PerfLog } from './index';
 
 export class PerfLogManager {
-  public static logMethod: ILogMethod = PerfLogManager.defaultLogMethod;
+  public static logMethod: ILogMethod;
 
-  public static perfLogs: PerfLog[] = [];
+  private static perfLogs: PerfLog[] = [];
   private static indexMap: ILogIndexMap = {};
 
   private static blocksUnderMeasurement: IBlockMap = {};
   private static currentActionId: any;
+
+  // Used as a "static constructor"
+  static initialize() {
+    this.logMethod = PerfLogManager.defaultLogMethod;
+  }
 
   public static setLogMethod(logMethod: ILogMethod): void {
     this.logMethod = logMethod;
@@ -102,3 +107,4 @@ export class PerfLogManager {
   }
 
 }
+PerfLogManager.initialize(); // call "static constructor"
