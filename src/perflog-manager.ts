@@ -31,16 +31,18 @@ export class PerfLogManager {
     PerfLogManager.getLog(name);
     this.blocksUnderMeasurement[name] = {
       startDate: new Date(),
-      startTime: performance.now(),
-      actionId: actionId
+      startTime: performance.now()
     };
+    if (actionId !== undefined) {
+      this.setActionId(actionId);
+    }
   }
 
   public static logPerfEnd(name: string, success: boolean) {
     let log = PerfLogManager.getLog(name);
     let timeTaken = performance.now() - this.blocksUnderMeasurement[name].startTime;
     this.logMethod(name,
-                   this.blocksUnderMeasurement[name].actionId,
+                   this.getActionId(),
                    success,
                    this.blocksUnderMeasurement[name].startDate,
                    timeTaken);
