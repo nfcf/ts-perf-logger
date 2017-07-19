@@ -2,7 +2,7 @@ import { ISutMap, ILogMethod, ILogIndexMap, IFlatLog } from './interfaces/index'
 import { PerfLog } from './index';
 
 export class PerfLogManager {
-  public static logMethod: ILogMethod;
+  private static logMethod: ILogMethod;
 
   private static perfLogs: PerfLog[] = [];
   private static indexMap: ILogIndexMap = {};
@@ -36,7 +36,7 @@ export class PerfLogManager {
    * @param actionId the new actionId
    * @param force Forces the new actionId even if a previous one is still set
    */
-  public static setActionId(actionId: any, force: boolean = false): void {
+  public static setActionId(actionId: any, force = false): void {
     if (force ||
         !actionId ||
         !this.currentActionId) {
@@ -44,6 +44,11 @@ export class PerfLogManager {
     }
   }
 
+  /**
+   * Initializes a performance logging system-under-test with the given key
+   * @param key the unique key/id for this perfLog. The same key needs to be used on the logPerfEnd call.
+   * @param actionId a unique actionId that we want to associate with this system-under-test
+   */
   public static logPerfInit(key: string, actionId?: any): void {
     PerfLogManager.getLog(key);
     this.suts[key] = {
@@ -55,6 +60,11 @@ export class PerfLogManager {
     }
   }
 
+  /**
+   * Finalizes the performance logging for the system-under-test with the given key
+   * @param key the unique key/id for this perfLog. Should be the same key used on the logPerfInit call.
+   * @param success whether the system-under-test executed successfuly or not.
+   */
   public static logPerfEnd(key: string, success: boolean) {
     let log = PerfLogManager.getLog(key);
     let timeTaken = performance.now() - this.suts[key].startTime;

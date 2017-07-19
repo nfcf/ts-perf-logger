@@ -61,8 +61,6 @@ export function DisableLogFunctionPerformance() {
 
 function getPerfLogPatchedMethod(name: string, method: Function, newLogMethod: ILogMethod) {
   return function (...args: any[]) {
-    let logMethod = newLogMethod || PerfLogManager.logMethod;
-
     PerfLogManager.logPerfInit(name);
 
     try {
