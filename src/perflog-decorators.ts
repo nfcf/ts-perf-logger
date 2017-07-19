@@ -62,34 +62,26 @@ export function DisableLogFunctionPerformance() {
 function getPerfLogPatchedMethod(name: string, method: Function, newLogMethod: ILogMethod) {
   return function (...args: any[]) {
     let logMethod = newLogMethod || PerfLogManager.logMethod;
-    let log = PerfLogManager.getLog(name);
-    let startDate = new Date();
-    let startTime = performance.now();
-    let timeTaken;
+
+    PerfLogManager.logPerfInit(name);
+
     try {
       let result = method.apply(this, args);
+
       if (result && result.then) { // if promise
         return result.then((val) => {
-          timeTaken = performance.now() - startTime;
-          logMethod(name, PerfLogManager.getActionId(), true, startDate, timeTaken);
-          log.appendSuccessTime(timeTaken);
+          PerfLogManager.logPerfEnd(name, true);
           return val;
         }).catch((e) => {
-          timeTaken = performance.now() - startTime;
-          logMethod(name, PerfLogManager.getActionId(), false, startDate, timeTaken);
-          log.appendFailureTime(timeTaken);
+          PerfLogManager.logPerfEnd(name, false);
           throw e;
         });
       } else { // if synchronous method
-        timeTaken = performance.now() - startTime;
-        logMethod(name, PerfLogManager.getActionId(), true, startDate, timeTaken);
-        log.appendSuccessTime(timeTaken);
+        PerfLogManager.logPerfEnd(name, true);
         return result;
       }
     } catch (ex) {
-      timeTaken = performance.now() - startTime;
-      logMethod(name, PerfLogManager.getActionId(), false, startDate, timeTaken);
-      log.appendFailureTime(timeTaken);
+      PerfLogManager.logPerfEnd(name, false);
       throw ex;
     }
   };

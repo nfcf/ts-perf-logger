@@ -1,4 +1,4 @@
-import { IBlockMap, ILogMethod, ILogIndexMap, IFlatLog } from './interfaces/index';
+import { ISutMap, ILogMethod, ILogIndexMap, IFlatLog } from './interfaces/index';
 import { PerfLog } from './index';
 
 export class PerfLogManager {
@@ -7,7 +7,7 @@ export class PerfLogManager {
   private static perfLogs: PerfLog[] = [];
   private static indexMap: ILogIndexMap = {};
 
-  private static blocksUnderMeasurement: IBlockMap = {};
+  private static suts: ISutMap = {};
   private static currentActionId: any;
 
   // Used as a "static constructor"
@@ -27,9 +27,9 @@ export class PerfLogManager {
     this.currentActionId = actionId;
   }
 
-  public static logPerfInit(name: string, actionId?: any): void {
-    PerfLogManager.getLog(name);
-    this.blocksUnderMeasurement[name] = {
+  public static logPerfInit(key: string, actionId?: any): void {
+    PerfLogManager.getLog(key);
+    this.suts[key] = {
       startDate: new Date(),
       startTime: performance.now()
     };
@@ -38,13 +38,13 @@ export class PerfLogManager {
     }
   }
 
-  public static logPerfEnd(name: string, success: boolean) {
-    let log = PerfLogManager.getLog(name);
-    let timeTaken = performance.now() - this.blocksUnderMeasurement[name].startTime;
-    this.logMethod(name,
+  public static logPerfEnd(key: string, success: boolean) {
+    let log = PerfLogManager.getLog(key);
+    let timeTaken = performance.now() - this.suts[key].startTime;
+    this.logMethod(key,
                    this.getActionId(),
                    success,
-                   this.blocksUnderMeasurement[name].startDate,
+                   this.suts[key].startDate,
                    timeTaken);
     if (success) {
       log.appendSuccessTime(timeTaken);
@@ -52,7 +52,7 @@ export class PerfLogManager {
       log.appendFailureTime(timeTaken);
     }
 
-    delete this.blocksUnderMeasurement[name];
+    this.removeFromSut(key);
   }
 
   public static getStatistics() {
@@ -69,14 +69,14 @@ export class PerfLogManager {
     return flatLogs;
   }
 
-  public static getLog(name: string): PerfLog {
-    if (this.indexMap.hasOwnProperty(name)) {
-      return this.perfLogs[this.indexMap[name]];
+  public static getLog(key: string): PerfLog {
+    if (this.indexMap.hasOwnProperty(key)) {
+      return this.perfLogs[this.indexMap[key]];
     }
-    let perfLog = new PerfLog(name);
+    let perfLog = new PerfLog(key);
     let index = this.perfLogs.length;
     this.perfLogs[index] = perfLog;
-    this.indexMap[name] = index;
+    this.indexMap[key] = index;
 
     return perfLog;
   }
@@ -101,6 +101,14 @@ export class PerfLogManager {
       failureAverage: perfLog.getFailureAverage(),
       failureStandardDeviation: perfLog.getFailureStandardDeviation()
     };
+  }
+
+  private static removeFromSut(key: string) {
+    delete this.suts[key];
+
+    if (Object.keys(this.suts).length === 0) {
+      this.setActionId(undefined);
+    }
   }
 
   private static defaultLogMethod(name: string, actionId: any, success: boolean, startDate: Date, timeTaken: number): void {
