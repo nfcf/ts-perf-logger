@@ -15,16 +15,33 @@ export class PerfLogManager {
     this.logMethod = PerfLogManager.defaultLogMethod;
   }
 
+  /**
+   * Global override of logMethod - the defaultLogMethod simply writes to console.log()
+   * @param logMethod the new logMethod
+   */
   public static setLogMethod(logMethod: ILogMethod): void {
     this.logMethod = logMethod;
   }
 
+  /**
+   * Gets the currently active actionId
+   */
   public static getActionId(): any {
     return this.currentActionId;
   }
 
-  public static setActionId(actionId: any): void {
-    this.currentActionId = actionId;
+  /**
+   * Sets a new actionId that will be cleared once the current code-under-test completes.
+   * Only sets a new actionId if there's none previously set
+   * @param actionId the new actionId
+   * @param force Forces the new actionId even if a previous one is still set
+   */
+  public static setActionId(actionId: any, force: boolean = false): void {
+    if (force ||
+        !actionId ||
+        !this.currentActionId) {
+      this.currentActionId = actionId;
+    }
   }
 
   public static logPerfInit(key: string, actionId?: any): void {
