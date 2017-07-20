@@ -133,9 +133,13 @@ export class PerfLogManager {
   private static removeFromSut(key: string) {
     delete this.suts[key];
 
-    if (Object.keys(this.suts).length === 0) {
-      this.setActionId(undefined);
-    }
+    // if after 50ms, the SUTs is empty, clear the actionId
+    // this is because some functions are synchronous but trigger other functions once they complete
+    setTimeout(() => {
+      if (Object.keys(this.suts).length === 0) {
+        this.setActionId(undefined);
+      }
+    }, 50);
   }
 
   private static defaultLogMethod(name: string, actionId: any, success: boolean, startDate: Date, timeTaken: number): void {
