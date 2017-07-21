@@ -10,7 +10,7 @@
       "dom"
     ],
     "skipLibCheck": true,
-    "types": ["lodash"]
+    "types": ["lodash", "rxjs"]
   },
   "exclude": [
     "node_modules"

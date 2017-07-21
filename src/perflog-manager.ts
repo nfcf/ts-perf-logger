@@ -1,3 +1,5 @@
+import { Observable } from 'rxjs/Observable';
+import { Observer } from 'rxjs/Observer';
 import { ISutMap, ILogMethod, ILogIndexMap, IFlatLog } from './interfaces/index';
 import { PerfLog } from './index';
 
@@ -81,6 +83,25 @@ export class PerfLogManager {
 
     this.removeFromSut(key);
   }
+
+  public static logPerfObservable(source: Observable<any>, key: string, actionId?: any): Observable<any> {
+    return Observable.create((observer: Observer<any>) => {
+      PerfLogManager.logPerfInit(key, actionId);
+      return source.subscribe(
+        (x: any) => {
+          observer.next(x);
+        },
+        (error: any) => {
+          PerfLogManager.logPerfEnd(key, false);
+          observer.error(error);
+        },
+        () => {
+          PerfLogManager.logPerfEnd(key, true);
+          observer.complete();
+        }
+      );
+    })
+  };
 
   public static getStatistics() {
     let flatLogs = [];

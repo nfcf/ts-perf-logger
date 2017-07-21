@@ -125,6 +125,22 @@ export class AppModule {
 }
 ```
 
+To Log the performance of Observables (from the moment it's subscribed to to the moment it completes) combine the operator let() with the PerfLogManager.logPerfObservable() method like so:
+
+```typescript
+import 'rxjs/add/operator/let';
+
+...
+
+  usingOperatorOnObservable() {
+    this.observable()
+    .let((o: any) => { return PerfLogManager.logPerfObservable(o, 'key'); })
+    .subscribe(() => { /* do something else */ });
+  }
+```
+
+
+
 
 
 To get the statistics for all executed methods call: 
