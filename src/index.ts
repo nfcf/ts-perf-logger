@@ -1,4 +1,4 @@
 export * from './interfaces';
-export * from './perflog';
-export * from './perflog-manager';
-export * from './perflog-decorators';
+export { PerfLog } from './perflog';
+export { PerfLogManager } from './perflog-manager';
+export { LogClassPerformance, LogFunctionPerformance, DisableLogFunctionPerformance } from './perflog-decorators';

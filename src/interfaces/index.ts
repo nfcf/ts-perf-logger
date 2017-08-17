@@ -1,5 +1,5 @@
-export * from './isut';
-export * from './istats';
-export * from './ilogindexmap';
-export * from './iflatlog';
-export * from './ilogmethod';
+export { ISut, ISutMap } from './isut';
+export { IStats } from './istats';
+export { ILogIndexMap } from './ilogindexmap';
+export { IFlatLog } from './iflatlog';
+export { ILogMethod } from './ilogmethod';
