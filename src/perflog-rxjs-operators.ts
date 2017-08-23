@@ -1,9 +1,8 @@
-/*
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
 import { PerfLogManager } from './index';
 
-export function logPerf<T>(this: Observable<T>, key: string, actionId?: any): Observable<any> {
+export function logPerf<T>(this: Observable<T>, key: string, actionId?: any): Observable<T> {
   let source = this;
 
   return Observable.create((observer: Observer<T>) => {
@@ -25,11 +24,10 @@ export function logPerf<T>(this: Observable<T>, key: string, actionId?: any): Ob
 }
 
 Observable.prototype.logPerf = logPerf;
-*/
 
 /*tslint:disable:no-shadowed-variable*/
-/*declare module 'rxjs/Observable' {
+declare module 'rxjs/Observable' {
   interface Observable<T> {
     logPerf: typeof logPerf;
   }
-}*/
+}

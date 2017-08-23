@@ -84,7 +84,7 @@ export class PerfLogManager {
     this.removeFromSut(key);
   }
 
-  public static logPerfObservable(source: Observable<any>, key: string, actionId?: any): Observable<any> {
+  /*public static logPerfObservable(source: Observable<any>, key: string, actionId?: any): Observable<any> {
     return Observable.create((observer: Observer<any>) => {
       PerfLogManager.logPerfInit(key, actionId);
       return source.subscribe(
@@ -101,7 +101,7 @@ export class PerfLogManager {
         }
       );
     })
-  };
+  };*/
 
   public static getStatistics() {
     let flatLogs = [];
