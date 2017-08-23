@@ -14,12 +14,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/nfcf/ts-perf-logger"
+    "url": "https://github.com/nfcf/ts-perf-logger"
   },
   "author": {
     "name": "Nuno Freire",
     "email": "nunofcf@gmail.com"
   },
+  "contributors": [
+    "http://www.getik.net/"
+  ],
   "keywords": [
     "typescript",
     "decorators",
@@ -29,7 +32,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://bitbucket.org/nfcf/ts-perf-logger/issues"
+    "url": "https://github.com/nfcf/ts-perf-logger/issues"
   },
   "main": "src/index.ts",
   "typings": "src/index.ts",
