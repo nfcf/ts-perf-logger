@@ -1,5 +1,12 @@
 # ts-perf-logger
 
+## ATTENTION: Some breaking changes were introduced with version 0.2.0:
+
+. @LogClassPerformance() and @LogFunctionPerformance() were merged into @LogPerformance() 
+. @DisableLogFunctionPerformance() was renamed to @DisableLogPerformance()
+. Observable operator logPerf() was renamed to logPerformance() 
+
+
 ## Installation
 
 To install this library, run:
@@ -13,24 +20,25 @@ $ npm install ts-perf-logger --save
 Once you have installed your library from npm, you can import it in any Typescript application by running:
 
 ```typescript
-import { LogClassPerformance,
-         LogFunctionPerformance,
-         PerfLogManager,
-         DisableLogFunctionPerformance } from 'ts-perf-logger';
+import { PerfLogManager,
+         LogPerformance,
+         DisableLogPerformance } from 'ts-perf-logger';
 
 ```
 
-Once your library is imported, you can use its @Decorators in your application:
+Once your library is imported, you can use its @Decorators in your application.
+
+Use it with a class decorator:
 
 ```typescript
-@LogClassPerformance()
+@LogPerformance()
 export class AppModule { 
   
   foo() {
     // ... do some work ...
   }
 
-  @DisableLogFunctionPerformance()
+  @DisableLogPerformance()
   bar() {
     // ... do some work ...
   }
@@ -38,12 +46,12 @@ export class AppModule {
 }
 ```
 
-or
+or with a method decorator:
 
 ```typescript
 export class AppModule { 
 
-  @LogFunctionPerformance()
+  @LogPerformance()
   foo() {
     // ... do some work ...
   }
@@ -51,7 +59,7 @@ export class AppModule {
 }
 ```
 
-or 
+or using the static logPerfInit() and logPerfEnd() methods:
 
 ```typescript
 export class AppModule { 
@@ -73,7 +81,7 @@ If you want / need to specify a unique ActionId for a group of method calls you 
 If setActionId is set, all subsequent function calls will reference this Id until it is cleared or changed:
 
 ```typescript
-@LogClassPerformance()
+@LogPerformance()
 export class AppModule { 
   
   foo() {
@@ -81,7 +89,7 @@ export class AppModule {
     // ... do some work, call other functions ...
   }
 
-  @DisableLogFunctionPerformance()
+  @DisableLogPerformance()
   bar() {
     // ... do some work ...
   }
@@ -98,7 +106,7 @@ export class AppModule {
     PerfLogManager.setActionId(0);
   }
 
-  @LogFunctionPerformance()
+  @LogPerformance()
   foo() {
     PerfLogManager.setActionId(PerfLogManager.getActionId() + 1);
     // ... do some work, call other functions ...
@@ -125,12 +133,12 @@ export class AppModule {
 }
 ```
 
-To Log the performance of Observables (from the moment it's subscribed to to the moment it completes):
+To Log the performance of Observables (from the moment it's subscribed to to the moment it completes - useful for Observables that emit only once and complete like HTTP requests):
 
 ```typescript
   usingOperatorOnObservable() {
     this.observable()
-    .logPerf('key')
+    .logPerformance('key')
     .subscribe(() => { /* do something else */ });
   }
 ```

@@ -67,14 +67,15 @@ export class PerfLogManager {
    * @param key the unique key/id for this perfLog. Should be the same key used on the logPerfInit call.
    * @param success whether the system-under-test executed successfuly or not.
    */
-  public static logPerfEnd(key: string, success: boolean) {
+  public static logPerfEnd(key: string, success: boolean, newLogMethod?: ILogMethod) {
     let log = PerfLogManager.getLog(key);
     let timeTaken = performance.now() - this.suts[key].startTime;
-    this.logMethod(key,
-                   this.getActionId(),
-                   success,
-                   this.suts[key].startDate,
-                   timeTaken);
+    let logger = newLogMethod || this.logMethod;
+    logger(key,
+           this.getActionId(),
+           success,
+           this.suts[key].startDate,
+           timeTaken);
     if (success) {
       log.appendSuccessTime(timeTaken);
     } else {
@@ -83,25 +84,6 @@ export class PerfLogManager {
 
     this.removeFromSut(key);
   }
-
-  /*public static logPerfObservable(source: Observable<any>, key: string, actionId?: any): Observable<any> {
-    return Observable.create((observer: Observer<any>) => {
-      PerfLogManager.logPerfInit(key, actionId);
-      return source.subscribe(
-        (x: any) => {
-          observer.next(x);
-        },
-        (error: any) => {
-          PerfLogManager.logPerfEnd(key, false);
-          observer.error(error);
-        },
-        () => {
-          PerfLogManager.logPerfEnd(key, true);
-          observer.complete();
-        }
-      );
-    })
-  };*/
 
   public static getStatistics() {
     let flatLogs = [];
