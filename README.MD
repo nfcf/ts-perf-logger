@@ -2,9 +2,9 @@
 
 ## ATTENTION: Some breaking changes were introduced with version 0.2.0:
 
-. @LogClassPerformance() and @LogFunctionPerformance() were merged into @LogPerformance() 
-. @DisableLogFunctionPerformance() was renamed to @DisableLogPerformance()
-. Observable operator logPerf() was renamed to logPerformance() 
+- @LogClassPerformance() and @LogFunctionPerformance() were merged into @LogPerformance() 
+- @DisableLogFunctionPerformance() was renamed to @DisableLogPerformance()
+- Observable operator logPerf() was renamed to logPerformance() 
 
 
 ## Installation
