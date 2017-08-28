@@ -1,4 +1,4 @@
-export interface IStats {
+export class PerfLogStats {
   count: number;
   mean: number;
   min: number;

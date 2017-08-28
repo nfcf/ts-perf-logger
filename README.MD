@@ -1,5 +1,11 @@
 # ts-perf-logger
 
+## ATTENTION: Some breaking changes were introduced with version 0.3.0:
+
+- Interface ILogMethod was renamed to IPerfLogMethod for consistency
+- IPerfLogMethod now takes a PerfLogItem object as a parameter instead of the previous 5 loose parameters
+- PerfLogManager.setLogHandler() now expects a class instance that implements IPerfLogHandler
+
 ## ATTENTION: Some breaking changes were introduced with version 0.2.0:
 
 - @LogClassPerformance() and @LogFunctionPerformance() were merged into @LogPerformance() 

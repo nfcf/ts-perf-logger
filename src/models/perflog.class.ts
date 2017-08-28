@@ -1,9 +1,10 @@
-import { IStats } from './interfaces/index';
+import { PerfLogStats } from './index';
+
 
 export class PerfLog {
   private name: string;
-  private successStats: IStats;
-  private failureStats: IStats;
+  private successStats: PerfLogStats;
+  private failureStats: PerfLogStats;
 
   constructor(name: string) {
     this.clear();
@@ -74,7 +75,7 @@ export class PerfLog {
   }
 
 
-  private getStandardDeviation(stats: IStats) {
+  private getStandardDeviation(stats: PerfLogStats) {
     if (stats.count < 2) {
       return NaN;
     }
@@ -84,7 +85,7 @@ export class PerfLog {
 
   // online mean and standard deviation calculation
   // reference: https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm
-  private getUpdatedStats(prev: IStats, updatedValue: number): IStats {
+  private getUpdatedStats(prev: PerfLogStats, updatedValue: number): PerfLogStats {
     let update = {
       count: prev.count + 1,
       min: Math.min(updatedValue, prev.min),

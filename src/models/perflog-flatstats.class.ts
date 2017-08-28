@@ -1,4 +1,4 @@
-export interface IFlatLog {
+export class PerfLogFlatStats {
   name: string;
   successes: number;
   successMin: number;

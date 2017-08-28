@@ -1,7 +1,8 @@
-import { ILogMethod } from './interfaces/index';
+import { IPerfLogMethod } from './models';
 import { PerfLogManager } from './index';
 
 import * as _ from 'lodash';
+
 
 /**
  * If decorator is used on a class: Logs the time it takes for all class methods to complete (or a subset of them).
@@ -14,7 +15,7 @@ import * as _ from 'lodash';
  * If method decorator: Name to be used in the logs to reference this method; Otherwise, 'Class.functionName' is used.
  * @param newLogMethod Override of logMethod - the defaultLogMethod simply writes to console.log()
  */
-export function LogPerformance(nameOrMethodNamesToLog?: string | string[], newLogMethod?: ILogMethod) {
+export function LogPerformance(nameOrMethodNamesToLog?: string | string[], newLogMethod?: IPerfLogMethod) {
   return function (...args: any[]) {
     switch (args.length) {
       case 1:
@@ -48,7 +49,7 @@ export function DisableLogPerformance() {
 }
 
 function logClassPerformance(target,
-                             methodNamesToLog?: string[], newLogMethod?: ILogMethod) {
+                             methodNamesToLog?: string[], newLogMethod?: IPerfLogMethod) {
   _.keys(target.prototype).filter(function (methodName: string): boolean {
     return !methodNamesToLog || methodNamesToLog.indexOf(methodName) !== -1;
   }).forEach(function (methodName: string): void {
@@ -65,7 +66,7 @@ function logClassPerformance(target,
 }
 
 function logMethodPerformance(target: Object, propertyKey: string, descriptor: TypedPropertyDescriptor<any>,
-                              name?: string, newLogMethod?: ILogMethod) {
+                              name?: string, newLogMethod?: IPerfLogMethod) {
   name = name || getObjectClass(target) + '.' + propertyKey;
   descriptor = descriptor || Object.getOwnPropertyDescriptor(target, propertyKey);
 
@@ -74,7 +75,7 @@ function logMethodPerformance(target: Object, propertyKey: string, descriptor: T
   descriptor.value.__perfLogCompleted = true;
 }
 
-function getPerfLogPatchedMethod(name: string, method: Function, newLogMethod: ILogMethod) {
+function getPerfLogPatchedMethod(name: string, method: Function, newLogMethod: IPerfLogMethod) {
   return function (...args: any[]) {
     PerfLogManager.logPerfInit(name);
 

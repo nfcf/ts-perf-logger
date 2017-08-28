@@ -1,28 +1,29 @@
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
-import { ISutMap, ILogMethod, ILogIndexMap, IFlatLog } from './interfaces/index';
+import { Map, PerfLogFlatStats, IPerfLogMethod, IPerfLogHandler, PerfLogItem } from './models';
 import { PerfLog } from './index';
+import { PerfLogHandler } from './perflog-log-handler';
 
 export class PerfLogManager {
-  private static logMethod: ILogMethod;
+  private static perfLogHandler: IPerfLogHandler;
 
   private static perfLogs: PerfLog[] = [];
-  private static indexMap: ILogIndexMap = {};
+  private static logsIndexMap: Map = {};
 
-  private static suts: ISutMap = {};
+  private static sutsMap: Map = {};
   private static currentActionId: any;
 
   // Used as a "static constructor"
   static initialize() {
-    this.logMethod = PerfLogManager.defaultLogMethod;
+    this.perfLogHandler = new PerfLogHandler();
   }
 
   /**
-   * Global override of logMethod - the defaultLogMethod simply writes to console.log()
-   * @param logMethod the new logMethod
+   * Global override of perfLogHandler - the default perfLogHandler implementation simply writes to console.log()
+   * @param perfLogHandler the new perfLogHandler
    */
-  public static setLogMethod(logMethod: ILogMethod): void {
-    this.logMethod = logMethod;
+  public static setLogHandler(perfLogHandler: IPerfLogHandler): void {
+    this.perfLogHandler = perfLogHandler;
   }
 
   /**
@@ -53,7 +54,7 @@ export class PerfLogManager {
    */
   public static logPerfInit(key: string, actionId?: any): void {
     PerfLogManager.getLog(key);
-    this.suts[key] = {
+    this.sutsMap[key] = {
       startDate: new Date(),
       startTime: performance.now()
     };
@@ -67,15 +68,16 @@ export class PerfLogManager {
    * @param key the unique key/id for this perfLog. Should be the same key used on the logPerfInit call.
    * @param success whether the system-under-test executed successfuly or not.
    */
-  public static logPerfEnd(key: string, success: boolean, newLogMethod?: ILogMethod) {
+  public static logPerfEnd(key: string, success: boolean, newLogMethod?: IPerfLogMethod) {
     let log = PerfLogManager.getLog(key);
-    let timeTaken = performance.now() - this.suts[key].startTime;
-    let logger = newLogMethod || this.logMethod;
-    logger(key,
-           this.getActionId(),
-           success,
-           this.suts[key].startDate,
-           timeTaken);
+    let timeTaken = performance.now() - this.sutsMap[key].startTime;
+
+    if (newLogMethod) {
+      newLogMethod(new PerfLogItem(key, this.getActionId(), success, this.sutsMap[key].startDate, timeTaken));
+    } else {
+      this.perfLogHandler.handleLog(new PerfLogItem(key, this.getActionId(), success, this.sutsMap[key].startDate, timeTaken));
+    }
+
     if (success) {
       log.appendSuccessTime(timeTaken);
     } else {
@@ -85,28 +87,28 @@ export class PerfLogManager {
     this.removeFromSut(key);
   }
 
-  public static getStatistics() {
-    let flatLogs = [];
+  public static getStatistics(): PerfLogFlatStats[] {
+    let flatStats = [];
 
-    for (let key in this.indexMap) {
-      if (this.indexMap.hasOwnProperty(key)) {
-        const log = this.perfLogs[this.indexMap[key]];
-        const flatLog = this.getFlatLog(key, log);
-        flatLogs.push(flatLog);
+    for (let key in this.logsIndexMap) {
+      if (this.logsIndexMap.hasOwnProperty(key)) {
+        const log = this.perfLogs[this.logsIndexMap[key]];
+        const flatStat = this.getFlatStats(key, log);
+        flatStats.push(flatStat);
       }
     }
 
-    return flatLogs;
+    return flatStats;
   }
 
   public static getLog(key: string): PerfLog {
-    if (this.indexMap.hasOwnProperty(key)) {
-      return this.perfLogs[this.indexMap[key]];
+    if (this.logsIndexMap.hasOwnProperty(key)) {
+      return this.perfLogs[this.logsIndexMap[key]];
     }
     let perfLog = new PerfLog(key);
     let index = this.perfLogs.length;
     this.perfLogs[index] = perfLog;
-    this.indexMap[key] = index;
+    this.logsIndexMap[key] = index;
 
     return perfLog;
   }
@@ -117,7 +119,7 @@ export class PerfLogManager {
     }
   }
 
-  private static getFlatLog(name: string, perfLog: PerfLog): IFlatLog {
+  private static getFlatStats(name: string, perfLog: PerfLog): PerfLogFlatStats {
     return {
       name: perfLog.getName(),
       successes: perfLog.getSuccesses(),
@@ -134,21 +136,15 @@ export class PerfLogManager {
   }
 
   private static removeFromSut(key: string) {
-    delete this.suts[key];
+    delete this.sutsMap[key];
 
     // if after 50ms, the SUTs is empty, clear the actionId
     // this is because some functions are synchronous but trigger other functions once they complete
     setTimeout(() => {
-      if (Object.keys(this.suts).length === 0) {
+      if (Object.keys(this.sutsMap).length === 0) {
         this.setActionId(undefined);
       }
     }, 50);
-  }
-
-  private static defaultLogMethod(name: string, actionId: any, success: boolean, startDate: Date, timeTaken: number): void {
-    const message = `Finished method '${name}';  ActionId: ${actionId}; Success: ${success}; ` +
-                    `Date: ${startDate.toISOString()}; Time: ${timeTaken}ms.`;
-    console.log(message);
   }
 
 }
