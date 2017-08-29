@@ -64,27 +64,32 @@ export class PerfLogManager {
   }
 
   /**
-   * Finalizes the performance logging for the system-under-test with the given key
+   * Finalizes the performance logging for the system-under-test with the given key;
+   * If a matching logPerfInit(key) wasn't previously called, no action is taken.
    * @param key the unique key/id for this perfLog. Should be the same key used on the logPerfInit call.
    * @param success whether the system-under-test executed successfuly or not.
    */
   public static logPerfEnd(key: string, success: boolean, newLogMethod?: IPerfLogMethod) {
     let log = PerfLogManager.getLog(key);
-    let timeTaken = performance.now() - this.sutsMap[key].startTime;
+    let sut = this.sutsMap[key];
 
-    if (newLogMethod) {
-      newLogMethod(new PerfLogItem(key, this.getActionId(), success, this.sutsMap[key].startDate, timeTaken));
-    } else {
-      this.perfLogHandler.handleLog(new PerfLogItem(key, this.getActionId(), success, this.sutsMap[key].startDate, timeTaken));
+    if (log && sut) {
+      let timeTaken = performance.now() - this.sutsMap[key].startTime;
+
+      if (newLogMethod) {
+        newLogMethod(new PerfLogItem(key, this.getActionId(), success, this.sutsMap[key].startDate, timeTaken));
+      } else {
+        this.perfLogHandler.handleLog(new PerfLogItem(key, this.getActionId(), success, this.sutsMap[key].startDate, timeTaken));
+      }
+
+      if (success) {
+        log.appendSuccessTime(timeTaken);
+      } else {
+        log.appendFailureTime(timeTaken);
+      }
+
+      this.removeFromSut(key);
     }
-
-    if (success) {
-      log.appendSuccessTime(timeTaken);
-    } else {
-      log.appendFailureTime(timeTaken);
-    }
-
-    this.removeFromSut(key);
   }
 
   public static getStatistics(): PerfLogFlatStats[] {
