@@ -1,18 +1,5 @@
 # ts-perf-logger
 
-## ATTENTION: Some breaking changes were introduced with version 0.3.0:
-
-- Interface ILogMethod was renamed to IPerfLogMethod for consistency
-- IPerfLogMethod now takes a PerfLogItem object as a parameter instead of the previous 5 loose parameters
-- PerfLogManager.setLogHandler() now expects a class instance that implements IPerfLogHandler
-
-## ATTENTION: Some breaking changes were introduced with version 0.2.0:
-
-- @LogClassPerformance() and @LogFunctionPerformance() were merged into @LogPerformance() 
-- @DisableLogFunctionPerformance() was renamed to @DisableLogPerformance()
-- Observable operator logPerf() was renamed to logPerformance() 
-
-
 ## Installation
 
 To install this library, run:
@@ -139,7 +126,7 @@ export class AppModule {
 }
 ```
 
-To Log the performance of Observables (from the moment it's subscribed to to the moment it completes - useful for Observables that emit only once and complete like HTTP requests):
+To Log the performance of Observables (from the moment it's subscribed to to the moment it first emits - useful for Observables that emit only once and complete like HTTP requests):
 
 ```typescript
   usingOperatorOnObservable() {

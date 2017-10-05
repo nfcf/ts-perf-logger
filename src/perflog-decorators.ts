@@ -1,8 +1,6 @@
 import { IPerfLogMethod } from './models';
 import { PerfLogManager } from './index';
 
-import * as _ from 'lodash';
-
 
 /**
  * If decorator is used on a class: Logs the time it takes for all class methods to complete (or a subset of them).
@@ -50,7 +48,7 @@ export function DisableLogPerformance() {
 
 function logClassPerformance(target,
                              methodNamesToLog?: string[], newLogMethod?: IPerfLogMethod) {
-  _.keys(target.prototype).filter(function (methodName: string): boolean {
+  Object.keys(target.prototype).filter(function (methodName: string): boolean {
     return !methodNamesToLog || methodNamesToLog.indexOf(methodName) !== -1;
   }).forEach(function (methodName: string): void {
     const originalMethod = target.prototype[methodName];
