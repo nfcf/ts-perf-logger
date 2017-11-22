@@ -143,13 +143,13 @@ export class PerfLogManager {
   private static removeFromSut(key: string) {
     delete this.sutsMap[key];
 
-    // if after 50ms, the SUTs is empty, clear the actionId
+    // if after 500ms, the SUTs is empty, clear the actionId
     // this is because some functions are synchronous but trigger other functions once they complete
     setTimeout(() => {
       if (Object.keys(this.sutsMap).length === 0) {
         this.setActionId(undefined);
       }
-    }, 50);
+    }, 500);
   }
 
 }
