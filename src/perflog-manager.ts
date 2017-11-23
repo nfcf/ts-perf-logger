@@ -51,15 +51,16 @@ export class PerfLogManager {
    * Initializes a performance logging system-under-test with the given key
    * @param key the unique key/id for this perfLog. The same key needs to be used on the logPerfEnd call.
    * @param actionId a unique actionId that we want to associate with this system-under-test
+   * @param force Forces the new actionId even if a previous one is still set
    */
-  public static logPerfInit(key: string, actionId?: any): void {
+  public static logPerfInit(key: string, actionId?: any, force?: boolean): void {
     PerfLogManager.getLog(key);
     this.sutsMap[key] = {
       startDate: new Date(),
       startTime: performance.now()
     };
-    if (actionId !== undefined) {
-      this.setActionId(actionId);
+    if (actionId !== undefined || force) {
+      this.setActionId(actionId, force);
     }
   }
 
@@ -143,13 +144,13 @@ export class PerfLogManager {
   private static removeFromSut(key: string) {
     delete this.sutsMap[key];
 
-    // if after 500ms, the SUTs is empty, clear the actionId
+    // if after 250ms, the SUTs is empty, clear the actionId
     // this is because some functions are synchronous but trigger other functions once they complete
     setTimeout(() => {
       if (Object.keys(this.sutsMap).length === 0) {
         this.setActionId(undefined);
       }
-    }, 500);
+    }, 250);
   }
 
 }
