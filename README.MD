@@ -1,5 +1,12 @@
 # ts-perf-logger
 
+## ATTENTION: Some breaking changes were introduced with version 0.4.0:
+
+- method getActionId was renamed to getCurrentActionId
+- method setActionId was renamed to setCurrentActionId (and the internals changed a bit)
+- logPerfInit dropped the 'force' parameter
+- logPerformance (rxjs operator) can now receive an 'actionId' parameter
+
 ## Installation
 
 To install this library, run:

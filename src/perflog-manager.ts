@@ -29,38 +29,32 @@ export class PerfLogManager {
   /**
    * Gets the currently active actionId
    */
-  public static getActionId(): any {
+  public static getCurrentActionId(): any {
     return this.currentActionId;
   }
 
   /**
    * Sets a new actionId that will be cleared once the current code-under-test completes.
-   * Only sets a new actionId if there's none previously set
    * @param actionId the new actionId
-   * @param force Forces the new actionId even if a previous one is still set
    */
-  public static setActionId(actionId: any, force?: boolean): void {
-    if (force ||
-        !actionId ||
-        !this.currentActionId) {
-      this.currentActionId = actionId || undefined;
-    }
+  public static setCurrentActionId(actionId: any): void {
+    this.currentActionId = actionId || undefined;
   }
 
   /**
    * Initializes a performance logging system-under-test with the given key
    * @param key the unique key/id for this perfLog. The same key needs to be used on the logPerfEnd call.
    * @param actionId a unique actionId that we want to associate with this system-under-test
-   * @param force Forces the new actionId even if a previous one is still set
    */
-  public static logPerfInit(key: string, actionId?: any, force?: boolean): void {
+  public static logPerfInit(key: string, actionId?: any): void {
     PerfLogManager.getLog(key);
     this.sutsMap[key] = {
       startDate: new Date(),
-      startTime: performance.now()
+      startTime: performance.now(),
+      actionId: actionId || this.getCurrentActionId()
     };
-    if (actionId !== undefined || force) {
-      this.setActionId(actionId, force);
+    if (!!actionId) {
+      this.setCurrentActionId(actionId);
     }
   }
 
@@ -78,9 +72,9 @@ export class PerfLogManager {
       let timeTaken = performance.now() - this.sutsMap[key].startTime;
 
       if (newLogMethod) {
-        newLogMethod(new PerfLogItem(key, this.getActionId(), success, this.sutsMap[key].startDate, timeTaken));
+        newLogMethod(new PerfLogItem(key, sut.actionId, success, this.sutsMap[key].startDate, timeTaken));
       } else {
-        this.perfLogHandler.handleLog(new PerfLogItem(key, this.getActionId(), success, this.sutsMap[key].startDate, timeTaken));
+        this.perfLogHandler.handleLog(new PerfLogItem(key, sut.actionId, success, this.sutsMap[key].startDate, timeTaken));
       }
 
       if (success) {
@@ -144,11 +138,11 @@ export class PerfLogManager {
   private static removeFromSut(key: string) {
     delete this.sutsMap[key];
 
-    // if after 250ms, the SUTs is empty, clear the actionId
+    // if after 250ms, the SUTs is empty, clear the currently active actionId
     // this is because some functions are synchronous but trigger other functions once they complete
     setTimeout(() => {
       if (Object.keys(this.sutsMap).length === 0) {
-        this.setActionId(undefined);
+        this.setCurrentActionId(undefined);
       }
     }, 250);
   }
