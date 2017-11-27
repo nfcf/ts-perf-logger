@@ -39,11 +39,11 @@ export class PerfLogManager {
    * @param actionId the new actionId
    * @param force Forces the new actionId even if a previous one is still set
    */
-  public static setActionId(actionId: any, force = false): void {
+  public static setActionId(actionId: any, force?: boolean): void {
     if (force ||
         !actionId ||
         !this.currentActionId) {
-      this.currentActionId = actionId;
+      this.currentActionId = actionId || undefined;
     }
   }
 
