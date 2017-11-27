@@ -1,3 +1,3 @@
-export class Map {
-  [k: string]: any;
+export class Map<T> {
+  [k: string]: T;
 }

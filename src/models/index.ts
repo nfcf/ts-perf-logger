@@ -5,4 +5,4 @@ export { PerfLog } from './perflog.class';
 export { PerfLogItem } from './perflog-item.class';
 export { PerfLogStats } from './perflog-stats.class';
 export { PerfLogFlatStats } from './perflog-flatstats.class';
-export { Sut } from './sut.class';
+export { Sut } from './sut.interface';

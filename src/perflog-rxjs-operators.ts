@@ -15,7 +15,7 @@ export function logPerformance<T>(this: Observable<T>, key: string, actionId?: s
   let source = this;
 
   return Observable.create((observer: Observer<T>) => {
-    PerfLogManager.logPerfInit(key, actionId);
+    PerfLogManager.logPerfInit(key, actionId, false);
     return source.subscribe(
       (x: any) => {
         if (!checkSuccess || checkSuccess(x)) {

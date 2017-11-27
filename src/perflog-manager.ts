@@ -1,6 +1,4 @@
-import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
-import { Map, PerfLogFlatStats, IPerfLogMethod, IPerfLogHandler, PerfLogItem } from './models';
+import { Map, PerfLogFlatStats, IPerfLogMethod, IPerfLogHandler, PerfLogItem, Sut } from './models';
 import { PerfLog } from './index';
 import { PerfLogHandler } from './perflog-log-handler';
 
@@ -8,9 +6,9 @@ export class PerfLogManager {
   private static perfLogHandler: IPerfLogHandler;
 
   private static perfLogs: PerfLog[] = [];
-  private static logsIndexMap: Map = {};
+  private static logsIndexMap: Map<number> = {};
 
-  private static sutsMap: Map = {};
+  private static sutsMap: Map<Sut> = {};
   private static currentActionId: any;
 
   // Used as a "static constructor"
@@ -45,16 +43,18 @@ export class PerfLogManager {
    * Initializes a performance logging system-under-test with the given key
    * @param key the unique key/id for this perfLog. The same key needs to be used on the logPerfEnd call.
    * @param actionId a unique actionId that we want to associate with this system-under-test
+   * @param setCurrentAction whether to associate this actionId with this system-under-test only,
+   * or make it the current active actionId for any follow up async calls that happen
    */
-  public static logPerfInit(key: string, actionId?: any): void {
+  public static logPerfInit(key: string, actionId?: any, setCurrentAction = true): void {
     PerfLogManager.getLog(key);
-    this.sutsMap[key] = {
+    this.sutsMap[key] = <Sut>{
       startDate: new Date(),
       startTime: performance.now(),
       actionId: actionId || this.getCurrentActionId()
     };
-    if (!!actionId) {
-      this.setCurrentActionId(actionId);
+    if (setCurrentAction) {
+      this.setCurrentActionId(this.sutsMap[key].actionId);
     }
   }
 
@@ -66,7 +66,7 @@ export class PerfLogManager {
    */
   public static logPerfEnd(key: string, success: boolean, newLogMethod?: IPerfLogMethod) {
     let log = PerfLogManager.getLog(key);
-    let sut = this.sutsMap[key];
+    let sut: Sut = this.sutsMap[key];
 
     if (log && sut) {
       let timeTaken = performance.now() - this.sutsMap[key].startTime;
